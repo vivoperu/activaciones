@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Activaciones BTL</title>
+<style>
+html,body{margin:0;height:100%;background:#131A33;color:#F2F4F9;font:16px system-ui,-apple-system,"Segoe UI",sans-serif}
+.c{min-height:100%;display:grid;place-items:center;text-align:center;padding:24px}
+.s{width:28px;height:28px;border:3px solid #ffffff33;border-top-color:#8492FF;border-radius:50%;animation:g .8s linear infinite;margin:14px auto}
+@keyframes g{to{transform:rotate(360deg)}}
+button{margin-top:14px;background:#3B4EE8;color:#fff;border:0;border-radius:8px;padding:10px 16px;font:inherit;font-weight:600}
+</style>
+</head>
+<body>
+<div class="c"><div><b style="font-size:22px">Activaciones BTL</b><div class="s"></div><div id="m">Cargando la plataforma…</div></div></div>
+<script>
+/* Este archivo no se vuelve a cambiar: la plataforma se descarga de Apps Script en cada visita. */
+var API = "https://script.google.com/macros/s/AKfycbxr_mJWhvqG_Q5guCc7TuBiZ46xjuVU4K9q8gBilq20-Rpw5qBl9llrbKwXEhhbhSuI/exec";
+function cargar(intento) {
+  fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: 'apiPagina', args: [] }), credentials: 'omit', redirect: 'follow', cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j.ok || !j.data || !j.data.html) throw new Error(j.error || 'respuesta vacía');
+      document.open();
+      document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><script>window.__API_URL__ = ' + JSON.stringify(API) + ';<\/script></head><body>' + j.data.html + '</body></html>');
+      document.close();
+    })
+    .catch(function (e) {
+      if (!intento) return setTimeout(function () { cargar(1); }, 1500);
+      document.getElementById('m').innerHTML = 'No se pudo cargar la plataforma. Revisa tu conexión.<br><button onclick="location.reload()">Intentar otra vez</button>';
+    });
+}
+cargar(0);
+</script>
+</body>
+</html>
